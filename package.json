@@ -6,6 +6,9 @@
   "scripts": {
     "test": "mocha test/vcontrolclient.coffee"
   },
+  "files": [
+    "index.js"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nexx512/node-vcontrol.git"
