@@ -1,0 +1,27 @@
+{
+  "name": "node-vcontrol",
+  "version": "1.0.0",
+  "description": "VControlD client for nodejs",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test/vcontrolclient.coffee"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nexx512/node-vcontrol.git"
+  },
+  "keywords": [
+    "vcontrold",
+    "viessmann"
+  ],
+  "author": "Jürgen Diez",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/nexx512/node-vcontrol/issues"
+  },
+  "homepage": "https://github.com/nexx512/node-vcontrol#readme",
+  "devDependencies": {
+    "coffeescript": "^2.3.2",
+    "should": "^13.2.3"
+  }
+}
