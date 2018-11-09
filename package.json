@@ -1,5 +1,5 @@
 {
-  "name": "node-vcontrol",
+  "name": "vcontrol",
   "version": "1.0.0",
   "description": "VControlD client for nodejs",
   "main": "index.js",
