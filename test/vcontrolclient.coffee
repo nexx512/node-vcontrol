@@ -8,15 +8,23 @@ mockVControldData =
 
 describe "The VControlClient", =>
 
-  before =>
-    @vControlClient = new VControlClient()
-
   describe "without a server", =>
+    before =>
+      @vControlClient = new VControlClient({
+        host: "localhost"
+        port: 3002
+        })
+
     it "should throw an error when connecting", =>
-      await @vControlClient.connect("localhost", 3002).should.rejectedWith("connect ECONNREFUSED 127.0.0.1:3002")
+      await @vControlClient.connect().should.rejectedWith("connect ECONNREFUSED 127.0.0.1:3002")
 
   describe "with a server", =>
     before =>
+      @vControlClient = new VControlClient({
+        host: "localhost"
+        port: 3002
+        })
+
       @mockVControlD = new MockVControlD(mockVControldData)
       await @mockVControlD.start("localhost", 3002)
 
@@ -30,7 +38,7 @@ describe "The VControlClient", =>
       await @vControlClient.getData("getTempA").should.rejectedWith("This socket is closed")
 
     it "should send the quit command when closing the connection", =>
-      await @vControlClient.connect("localhost", 3002)
+      await @vControlClient.connect()
       await @vControlClient.close()
 
       @mockVControlD.commandLog.should.eql(["quit"])
@@ -38,7 +46,7 @@ describe "The VControlClient", =>
     describe "and proper opening an closing connection", =>
       beforeEach =>
         @mockVControlD.resetCommandLog()
-        await @vControlClient.connect("localhost", 3002)
+        await @vControlClient.connect()
 
       afterEach =>
         await @vControlClient.close()

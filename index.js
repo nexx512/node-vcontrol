@@ -1,11 +1,17 @@
 const net = require("net")
 
-class VControlClient {
+module.exports = class VControlClient {
 
   /**
-   * Create a new instance for a VControl client
+   * Create a new instance for a VControl client.
+   *
+   * @param {String} host hostname where vcontrold runs
+   * @param {Number} port to connect to vcontrold
    */
-  constructor() {
+  constructor(config) {
+    this.host = config.host
+    this.port = config.port
+
     this.client = new net.Socket()
 
     this.resetHandlers()
@@ -31,11 +37,9 @@ class VControlClient {
    * Rejects if the connectino can't be established or the server doesn't
    * respond with a valid prompt.
    *
-   * @param {String} host
-   * @param {Number} port
    * @return {Promise}
    */
-  async connect(host, port) {
+  async connect() {
     return new Promise((resolve, reject) => {
       this.errorHandler = reject
       this.dataHandler = (data) => {
@@ -47,7 +51,7 @@ class VControlClient {
         }
       }
       console.log("Connecting to vControl...")
-      this.client.connect(port, host)
+      this.client.connect(this.port, this.host)
     }).then(() => {
       this.resetHandlers()
     })
@@ -149,5 +153,3 @@ class VControlClient {
   }
 
 }
-
-module.exports = VControlClient
