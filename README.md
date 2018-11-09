@@ -3,6 +3,12 @@
 VControlD client to connect to a running [VControlD](https://github.com/openv/vcontrold) service.
 The client can read data from the service by sending a `get` command or write data by sending a `set` command.
 
+Details on how to set up the hard- and software to get a VControlD server running can be found in the [OpenV-Wiki](https://github.com/openv/openv/wiki).
+
+## Disclaimer
+
+You use this software at your own risk. I can not be held liably for anything that happens, including any damage, to your heating system by the use of this software.
+
 ## Installation
 
 install with npm
