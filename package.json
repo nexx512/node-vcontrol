@@ -15,7 +15,8 @@
   },
   "keywords": [
     "vcontrold",
-    "viessmann"
+    "viessmann",
+    "openv"
   ],
   "author": "Jürgen Diez",
   "license": "GPL-3.0",
