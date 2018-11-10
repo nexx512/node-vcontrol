@@ -1,9 +1,10 @@
 # VControl Client
 
-VControlD client to connect to a running [VControlD](https://github.com/openv/vcontrold) service.
+VControlD client to connect to a running [vcontrold](https://github.com/openv/vcontrold) service.
 The client can read data from the service by sending a `get` command or write data by sending a `set` command.
+The available commands can be obtained when connecting with telnet to the vcontrold service and send `commands`.
 
-Details on how to set up the hard- and software to get a VControlD server running can be found in the [OpenV-Wiki](https://github.com/openv/openv/wiki).
+Details on how to set up the hard- and software to get a vcontrold server running can be found in the [OpenV-Wiki](https://github.com/openv/openv/wiki).
 
 ## Disclaimer
 
@@ -11,23 +12,26 @@ You use this software at your own risk. I can not be held liable for anything th
 
 ## Installation
 
-install with npm
+Install with npm
 
 ```
-npm install vcontrol
+npm install vcontrol-client
 ```
 
 ## Example
 
 ```javascript
-const VControlClient = require("vcontrol")
+const VControlClient = require("vcontrol-client")
 
-vControlClient = new VControlClient("localhost", 3002)
+vControlClient = new VControlClient({
+  host: "localhost",
+  port: 3002
+})
 
 await vControlCLient.connect()
 
 let data = await vControlClient.getData("getTempA")
-await vControlClient.setData("setTimerZirkuMo", "07:00 09:00")
+await vControlClient.setData("setTimerZirkuMo", ["07:00", "09:00"])
 
 await vControlClient.close()
 ```
