@@ -12,6 +12,12 @@ module.exports = class VControlClient {
     this.host = config.host
     this.port = config.port
 
+    if (config.debug) {
+      this.log = console.log
+    } else {
+      this.log = () => {}
+    }
+
     this.client = new net.Socket()
 
     this.resetHandlers()
@@ -44,13 +50,13 @@ module.exports = class VControlClient {
       this.errorHandler = reject
       this.dataHandler = (data) => {
         if (data === "vctrld>") {
-          console.log("Connection to vControl established")
+          this.log("Connection to vControl established")
           resolve()
         } else {
           reject(new Error(data))
         }
       }
-      console.log("Connecting to vControl...")
+      this.log("Connecting to vControl...")
       this.client.connect(this.port, this.host)
     }).then(() => {
       this.resetHandlers()
@@ -66,7 +72,7 @@ module.exports = class VControlClient {
     return new Promise((resolve, reject) => {
       this.errorHandler = reject
       this.closeHandler = () => {
-        console.log("Connection to vControl closed")
+        this.log("Connection to vControl closed")
         resolve();
       }
       this.client.write("quit\n")
@@ -91,16 +97,16 @@ module.exports = class VControlClient {
           response = dataMatches[1]
         }
         if (dataMatches && dataMatches[2]) {
-          console.log("Command finished.")
+          this.log("Command finished.")
           if (response.startsWith("ERR:")) {
             return reject(new Error("Unable to perform command '" + command + "': " + response))
           } else {
-            console.log("Received response: " + response)
+            this.log("Received response: " + response)
             return resolve(response)
           }
         }
       }
-      console.log("Sending command: '" + command + "'...")
+      this.log("Sending command: '" + command + "'...")
       this.client.write(command + "\n")
     }).then((data) => {
       this.errorHandler = () => {}
@@ -127,7 +133,7 @@ module.exports = class VControlClient {
           response = dataMatches[1]
         }
         if (dataMatches && dataMatches[2]) {
-          console.log("Command finished.")
+          this.log("Command finished.")
           if (response.startsWith("OK")) {
             return resolve(response)
           } else {
@@ -135,7 +141,7 @@ module.exports = class VControlClient {
           }
         }
       }
-      console.log("Sending command: '" + command + "'...")
+      this.log("Sending command: '" + command + "'...")
 
       let argsString = ""
       if (args instanceof Array) {
