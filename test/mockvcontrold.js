@@ -10,7 +10,7 @@ module.exports = class MockVControlD {
       c.on("end", () => this.logger("client disconnected."))
       this.logger("client connected.")
       c.write("vctrld>")
-      c.on("data", (data) => {
+      c.on("data", async (data) => {
         let rawCommand = data.toString().replace(/\r?\n$/, "")
         this.commandLog.push(rawCommand)
         let args = rawCommand.split(" ")
@@ -20,16 +20,21 @@ module.exports = class MockVControlD {
         } else {
           this.logger("Command:", command)
           if (args.length == 0) {
-            let response = mockVControldData[command]
-            if (response) {
+            let responseFunction = mockVControldData[command]
+            if (responseFunction) {
+              let response = await responseFunction()
               this.logger("Response:", response)
-              c.write(response + "\n")
+              try {
+                c.write(response + "\n")
+              } catch (e) {
+                this.logger("Error sending resonse: " + e)
+              }
             } else {
               this.logger("Unknown command.")
               c.write("ERR: unknown command\n")
             }
           } else {
-            let commandArgsRegexp = new RegExp(mockVControldData[command])
+            let commandArgsRegexp = new RegExp(await mockVControldData[command]())
             this.logger("Arguments:", args)
             if (args.every((a) => commandArgsRegexp.test(a))) {
               c.write("OK\n")
@@ -38,7 +43,11 @@ module.exports = class MockVControlD {
               c.write("ERR: invalid arguments. Arguments don't match " + commandArgsRegexp.toString+ "\n")
             }
           }
-          c.write("vctrld>")
+          try {
+            c.write("vctrld>")
+          } catch (e) {
+            this.logger("Error sending prompt: " + e)
+          }
         }
       })
     })

@@ -3,8 +3,13 @@ MockVControlD = require("./mockvcontrold")
 VControlClient = require("../index")
 
 mockVControldData =
-  "getTempA": "60.00000"
-  "setTimerZirkuSo": ""
+  getTempA: () -> "60.00000 Grad Celsius"
+  setTimerZirkuSo: () -> ""
+  wait: () ->
+    new Promise (resolve, reject) ->
+      #resolve()
+      setTimeout(resolve, 1005)
+
 
 describe "The VControlClient", =>
 
@@ -54,7 +59,7 @@ describe "The VControlClient", =>
       it "should get data", =>
         data = await @vControlClient.getData("getTempA")
 
-        data.should.equal("60.00000\n")
+        data.should.equal("60.00000 Grad Celsius\n")
         @mockVControlD.commandLog.should.eql(["getTempA"])
 
       it "should set data string", =>
@@ -71,3 +76,14 @@ describe "The VControlClient", =>
         await @vControlClient.getData("unknownCommand").should.rejectedWith(new Error("Unable to perform command 'unknownCommand': ERR: unknown command\n"))
 
         @mockVControlD.commandLog.should.eql(["unknownCommand"])
+
+    describe "and a command that doesn't return in time", =>
+      beforeEach =>
+        await @vControlClient.connect()
+
+      it "should teminate the connection after the watchdog timeout", =>
+        start = Date.now()
+        await @vControlClient.getData("wait").should.rejectedWith(new Error("No response for command wait within 1000ms"))
+        timeout = Date.now() - start
+        timeout.should.approximately(1000, 5)
+        @vControlClient.client.destroyed.should.true()

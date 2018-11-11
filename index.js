@@ -1,5 +1,7 @@
 const net = require("net")
 
+const TIMEOUT = 1000
+
 module.exports = class VControlClient {
 
   /**
@@ -50,14 +52,14 @@ module.exports = class VControlClient {
       this.errorHandler = reject
       this.dataHandler = (data) => {
         if (data === "vctrld>") {
-          this.log("Connection to vControl established")
+          this.log("Connection to vControl successfully established")
           resolve()
         } else {
           reject(new Error(data))
         }
       }
       this.log("Connecting to vControl...")
-      this.client.connect(this.port, this.host)
+      this.client.connect(this.port, this.host, () => this.log("Connected to vControl server"))
     }).then(() => {
       this.resetHandlers()
     })
@@ -107,11 +109,16 @@ module.exports = class VControlClient {
         }
       }
       this.log("Sending command: '" + command + "'...")
+      this.timeout = setTimeout(() => this.client.destroy(new Error("No response for command " + command + " within " + TIMEOUT + "ms")), TIMEOUT)
       this.client.write(command + "\n")
     }).then((data) => {
+      clearTimeout(this.timeout)
       this.errorHandler = () => {}
       this.dataHandler = () => {}
       return data
+    }).catch((error) => {
+      clearTimeout(this.timeout)
+      return Promise.reject(error)
     })
   }
 
