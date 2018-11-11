@@ -1,6 +1,6 @@
 # VControl Client
 
-VControlD client to connect to a running [vcontrold](https://github.com/openv/vcontrold) service.
+Vcontrold client to connect to a running [vcontrold](https://github.com/openv/vcontrold) service.
 The client can read data from the service by sending a `get` command or write data by sending a `set` command.
 The available commands can be obtained when connecting with telnet to the vcontrold service and send `commands`.
 
@@ -26,6 +26,8 @@ const VControlClient = require("vcontrol-client")
 vControlClient = new VControlClient({
   host: "localhost",
   port: 3002
+  timeout: 4000 // optional, default: 3000ms
+  debug: true   // optional
 })
 
 await vControlCLient.connect()
