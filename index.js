@@ -110,7 +110,7 @@ module.exports = class VControlClient {
         }
       }
       this.log("Sending command: '" + command + "'...")
-      this.timeoutHandler = setTimeout(() => this.client.destroy(new Error("No response for command " + command + " within " + TIMEOUT + "ms")), TIMEOUT)
+      this.timeoutHandler = setTimeout(() => this.client.destroy(new Error("No response for command " + command + " within " + this.timeout + "ms")), this.timeout)
       this.client.write(command + "\n")
     }).then((data) => {
       clearTimeout(this.timeoutHandler)
