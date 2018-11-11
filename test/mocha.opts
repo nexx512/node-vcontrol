@@ -1,1 +1,2 @@
 --compilers coffee:coffeescript/register
+--timeout 5s

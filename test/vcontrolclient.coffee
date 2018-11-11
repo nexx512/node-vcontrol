@@ -8,7 +8,7 @@ mockVControldData =
   wait: () ->
     new Promise (resolve, reject) ->
       #resolve()
-      setTimeout(resolve, 1005)
+      setTimeout(resolve, 3005)
 
 
 describe "The VControlClient", =>
@@ -85,5 +85,5 @@ describe "The VControlClient", =>
         start = Date.now()
         await @vControlClient.getData("wait").should.rejectedWith(new Error("No response for command wait within 1000ms"))
         timeout = Date.now() - start
-        timeout.should.approximately(1000, 5)
+        timeout.should.approximately(3000, 5)
         @vControlClient.client.destroyed.should.true()
