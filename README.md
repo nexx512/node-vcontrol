@@ -1,6 +1,6 @@
-# VControl Client
+# VControl
 
-Vcontrold client to connect to a running [vcontrold](https://github.com/openv/vcontrold) service.
+vcontrold client to connect to a running [vcontrold](https://github.com/openv/vcontrold) service.
 The client can read data from the service by sending a `get` command or write data by sending a `set` command.
 The available commands can be obtained when connecting with telnet to the vcontrold service and send `commands`.
 
@@ -15,25 +15,28 @@ You use this software at your own risk. I can not be held liable for anything th
 Install with npm
 
 ```
-npm install vcontrol-client
+npm install --save vcontrol
 ```
 
 ## Example
 
 ```javascript
-const VControlClient = require("vcontrol-client")
+const VControl = require("vcontrol")
 
-vControlClient = new VControlClient({
+vControlC = new VControl({
   host: "localhost",
   port: 3002
   timeout: 4000 // optional, default: 3000ms
   debug: true   // optional
 })
 
-await vControlCLient.connect()
+await vControl.connect()
 
-let data = await vControlClient.getData("getTempA")
-await vControlClient.setData("setTimerZirkuMo", ["07:00", "09:00"])
+let data = await vControl.getData("getTempA")
+await vControl.setData("setTimerZirkuMo", ["07:00", "09:00"])
 
-await vControlClient.close()
+await vControl.close()
 ```
+
+I experienced that vcontrold block command execution if there are multiple open connections.
+It might be a good practice to close the connection when the command finished.

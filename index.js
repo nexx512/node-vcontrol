@@ -2,7 +2,7 @@ const net = require("net")
 
 const TIMEOUT = 3000
 
-module.exports = class VControlClient {
+module.exports = class VControl {
 
   /**
    * Create a new instance for a VControl client.
@@ -21,13 +21,13 @@ module.exports = class VControlClient {
       this.log = () => {}
     }
 
-    this.client = new net.Socket()
+    this.socket = new net.Socket()
 
     this.resetHandlers()
 
-    this.client.on("data", (data) => this.dataHandler(data.toString()))
-    this.client.on("error", (error) => this.errorHandler(error))
-    this.client.on("close", () => this.closeHandler())
+    this.socket.on("data", (data) => this.dataHandler(data.toString()))
+    this.socket.on("error", (error) => this.errorHandler(error))
+    this.socket.on("close", () => this.closeHandler())
   }
 
    /**
@@ -60,7 +60,7 @@ module.exports = class VControlClient {
         }
       }
       this.log("Connecting to vControl...")
-      this.client.connect(this.port, this.host, () => this.log("Connected to vControl server"))
+      this.socket.connect(this.port, this.host, () => this.log("Connected to vControl server"))
     }).then(() => {
       this.resetHandlers()
     })
@@ -78,7 +78,7 @@ module.exports = class VControlClient {
         this.log("Connection to vControl closed")
         resolve();
       }
-      this.client.write("quit\n")
+      this.socket.write("quit\n")
     }).then(() => {
       this.resetHandlers()
     })
@@ -110,8 +110,8 @@ module.exports = class VControlClient {
         }
       }
       this.log("Sending command: '" + command + "'...")
-      this.timeoutHandler = setTimeout(() => this.client.destroy(new Error("No response for command " + command + " within " + this.timeout + "ms")), this.timeout)
-      this.client.write(command + "\n")
+      this.timeoutHandler = setTimeout(() => this.socket.destroy(new Error("No response for command " + command + " within " + this.timeout + "ms")), this.timeout)
+      this.socket.write(command + "\n")
     }).then((data) => {
       clearTimeout(this.timeoutHandler)
       this.errorHandler = () => {}
@@ -158,7 +158,7 @@ module.exports = class VControlClient {
         argsString = args
       }
       commandString = command + " " + argsString
-      this.client.write(commandString + "\n")
+      this.socket.write(commandString + "\n")
     }).then((data) => {
       this.errorHandler = () => {}
       this.dataHandler = () => {}
