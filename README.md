@@ -38,5 +38,5 @@ await vControl.setData("setTimerZirkuMo", ["07:00", "09:00"])
 await vControl.close()
 ```
 
-I experienced that vcontrold block command execution if there are multiple open connections.
+I experienced that vcontrold blocks command execution if there are multiple open connections.
 It might be a good practice to close the connection when the command finished.
