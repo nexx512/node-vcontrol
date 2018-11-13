@@ -27,5 +27,8 @@
   "devDependencies": {
     "coffeescript": "^2.3.2",
     "should": "^13.2.3"
+  },
+  "engines": {
+    "node" : ">=7.0.0"
   }
 }
