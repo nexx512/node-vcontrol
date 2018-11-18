@@ -1,6 +1,6 @@
 const net = require("net")
 
-const TIMEOUT = 3000
+const TIMEOUT = 5000
 
 module.exports = class VControl {
 
@@ -16,9 +16,9 @@ module.exports = class VControl {
     this.timeout = config.timeout ? config.timeout : TIMEOUT
 
     if (config.debug) {
-      this.log = console.log
+      this.logger = console.log
     } else {
-      this.log = () => {}
+      this.logger = () => {}
     }
 
     this.socket = new net.Socket()
@@ -28,6 +28,15 @@ module.exports = class VControl {
     this.socket.on("data", (data) => this.dataHandler(data.toString()))
     this.socket.on("error", (error) => this.errorHandler(error))
     this.socket.on("close", () => this.closeHandler())
+  }
+
+  /**
+   * Log function
+   *
+   * @api private
+   */
+  log(msg) {
+    this.logger("[" + this.socket.localPort + "] " + msg)
   }
 
    /**
@@ -78,7 +87,8 @@ module.exports = class VControl {
         this.log("Connection to vControl closed")
         resolve();
       }
-      this.socket.write("quit\n")
+      this.log("Closing connection to vControl...")
+      this.socket.end()
     }).then(() => {
       this.resetHandlers()
     })
@@ -110,7 +120,7 @@ module.exports = class VControl {
         }
       }
       this.log("Sending command: '" + command + "'...")
-      this.timeoutHandler = setTimeout(() => this.socket.destroy(new Error("No response for command " + command + " within " + this.timeout + "ms")), this.timeout)
+      this.timeoutHandler = setTimeout(() => reject(new Error("No response for command " + command + " within " + this.timeout + "ms")) , this.timeout)
       this.socket.write(command + "\n")
     }).then((data) => {
       clearTimeout(this.timeoutHandler)

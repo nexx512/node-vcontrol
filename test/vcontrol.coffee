@@ -7,7 +7,6 @@ mockVControldData =
   setTimerZirkuSo: () -> ""
   wait: () ->
     new Promise (resolve, reject) ->
-      #resolve()
       setTimeout(resolve, 1005)
 
 
@@ -43,11 +42,11 @@ describe "The VControl", =>
     it "should throw an error if the connection is not opened before getting data", =>
       await @vControl.getData("getTempA").should.rejectedWith("This socket is closed")
 
-    it "should send the quit command when closing the connection", =>
+    it "should end the seocket when closing the connection", =>
       await @vControl.connect()
       await @vControl.close()
 
-      @mockVControlD.commandLog.should.eql(["quit"])
+      should.not.exist(@vControl.socket.localPort)
 
     describe "and proper opening an closing connection", =>
       beforeEach =>
@@ -82,9 +81,11 @@ describe "The VControl", =>
       beforeEach =>
         await @vControl.connect()
 
-      it "should teminate the connection after the watchdog timeout", =>
+      afterEach =>
+        await @vControl.close()
+
+      it "should throw an exception after the watchdog timed out", =>
         start = Date.now()
         await @vControl.getData("wait").should.rejectedWith(new Error("No response for command wait within 1000ms"))
         timeout = Date.now() - start
         timeout.should.approximately(1000, 5)
-        @vControl.socket.destroyed.should.true()

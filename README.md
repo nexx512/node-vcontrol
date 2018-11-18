@@ -26,7 +26,7 @@ const VControl = require("vcontrol")
 vControlC = new VControl({
   host: "localhost",
   port: 3002
-  timeout: 4000 // optional, default: 3000ms
+  timeout: 4000 // optional, default: 5000ms
   debug: true   // optional
 })
 
