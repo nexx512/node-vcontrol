@@ -1,6 +1,6 @@
 {
   "name": "vcontrol",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "vcontrold client for nodejs",
   "main": "index.js",
   "scripts": {
@@ -29,6 +29,6 @@
     "should": "^13.2.3"
   },
   "engines": {
-    "node" : ">=7.0.0"
+    "node": ">=7.0.0"
   }
 }
