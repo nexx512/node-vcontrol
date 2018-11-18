@@ -5,9 +5,6 @@ VControl = require("../index")
 mockVControldData =
   getTempA: () -> "60.00000 Grad Celsius"
   setTimerZirkuSo: () -> ""
-  wait: () ->
-    new Promise (resolve, reject) ->
-      setTimeout(resolve, 1005)
 
 
 describe "The VControl", =>
@@ -27,7 +24,6 @@ describe "The VControl", =>
       @vControl = new VControl({
         host: "localhost"
         port: 3002
-        timeout: 1000
         })
 
       @mockVControlD = new MockVControlD(mockVControldData)
@@ -42,7 +38,7 @@ describe "The VControl", =>
     it "should throw an error if the connection is not opened before getting data", =>
       await @vControl.getData("getTempA").should.rejectedWith("This socket is closed")
 
-    it "should end the seocket when closing the connection", =>
+    it "should end the socket when closing the connection", =>
       await @vControl.connect()
       await @vControl.close()
 
@@ -76,16 +72,3 @@ describe "The VControl", =>
         await @vControl.getData("unknownCommand").should.rejectedWith(new Error("Unable to perform command 'unknownCommand': ERR: unknown command\n"))
 
         @mockVControlD.commandLog.should.eql(["unknownCommand"])
-
-    describe "and a command that doesn't return in time", =>
-      beforeEach =>
-        await @vControl.connect()
-
-      afterEach =>
-        await @vControl.close()
-
-      it "should throw an exception after the watchdog timed out", =>
-        start = Date.now()
-        await @vControl.getData("wait").should.rejectedWith(new Error("No response for command wait within 1000ms"))
-        timeout = Date.now() - start
-        timeout.should.approximately(1000, 5)

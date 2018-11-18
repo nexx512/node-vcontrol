@@ -1,7 +1,5 @@
 const net = require("net")
 
-const TIMEOUT = 5000
-
 module.exports = class VControl {
 
   /**
@@ -13,7 +11,6 @@ module.exports = class VControl {
   constructor(config) {
     this.host = config.host
     this.port = config.port
-    this.timeout = config.timeout ? config.timeout : TIMEOUT
 
     if (config.debug) {
       this.logger = console.log
@@ -120,16 +117,11 @@ module.exports = class VControl {
         }
       }
       this.log("Sending command: '" + command + "'...")
-      this.timeoutHandler = setTimeout(() => reject(new Error("No response for command " + command + " within " + this.timeout + "ms")) , this.timeout)
       this.socket.write(command + "\n")
     }).then((data) => {
-      clearTimeout(this.timeoutHandler)
       this.errorHandler = () => {}
       this.dataHandler = () => {}
       return data
-    }).catch((error) => {
-      clearTimeout(this.timeoutHandler)
-      return Promise.reject(error)
     })
   }
 
