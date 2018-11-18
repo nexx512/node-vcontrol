@@ -56,6 +56,11 @@ module.exports = class VControl {
    */
   async connect() {
     return new Promise((resolve, reject) => {
+      if (this.socket.connecting || this.socket.localPort) {
+        reject(new Error("Client already connected. Close connection first."))
+        return
+      }
+
       this.errorHandler = reject
       this.dataHandler = (data) => {
         if (data === "vctrld>") {

@@ -38,6 +38,13 @@ describe "The VControl", =>
     it "should throw an error if the connection is not opened before getting data", =>
       await @vControl.getData("getTempA").should.rejectedWith("This socket is closed")
 
+    it "should throw an error when trying to connect twice", =>
+      await @vControl.connect()
+      await @vControl.connect().should.rejectedWith("Client already connected. Close connection first.")
+      await @vControl.close()
+
+      should.not.exist(@vControl.socket.localPort)
+
     it "should end the socket when closing the connection", =>
       await @vControl.connect()
       await @vControl.close()
